@@ -1,0 +1,61 @@
+<div class="qp-confirm-backdrop">
+  <div class="qp-confirm-dialog rounded-[2rem] p-6 sm:p-7 w-[calc(100%-2rem)] max-w-[560px]">
+    <p class="text-[10px] uppercase font-bold tracking-[0.18em] text-zinc-500">{{ verification.eyebrow }}</p>
+    <h3 class="mt-2 text-2xl font-light tracking-tight text-zinc-900">{{ verification.heading }}</h3>
+    <p class="mt-2 text-sm text-zinc-600">{{ verification.description }}</p>
+
+    {% if verification.resend_success %}
+    <div class="mt-5 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+      Новий код уже надіслано.
+    </div>
+    {% endif %}
+
+    {% if verification.form.non_field_errors %}
+    <div class="mt-5 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+      {{ verification.form.non_field_errors|join:", " }}
+    </div>
+    {% endif %}
+
+    <div class="qp-glass-soft mt-5 rounded-2xl p-4">
+      <p class="text-[10px] uppercase font-bold tracking-wider text-zinc-500">Номер телефону</p>
+      <p class="mt-1 text-sm font-semibold text-zinc-900">{{ verification.phone_display }}</p>
+    </div>
+
+    <form method="post" class="mt-5 space-y-4">
+      {% csrf_token %}
+      <input type="hidden" name="verification_action" value="verify">
+
+      <div class="space-y-2">
+        <label for="{{ verification.form.code.id_for_label }}" class="text-[10px] uppercase font-bold text-zinc-500 tracking-wider ml-4">{{ verification.form.code.label }}</label>
+        {{ verification.form.code }}
+        {% if verification.form.code.errors %}<small class="text-sm text-red-600 ml-4">{{ verification.form.code.errors|join:", " }}</small>{% endif %}
+      </div>
+
+      <button type="submit" class="stitch-btn stitch-btn--solid add-cart w-full">
+        {{ verification.submit_label }}
+      </button>
+    </form>
+
+    <div class="mt-5 grid gap-3 sm:grid-cols-2">
+      <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="verification_action" value="resend">
+        <button type="submit" class="stitch-btn stitch-btn--soft w-full" {% if verification.resend_wait_seconds > 0 %}disabled{% endif %}>
+          {% if verification.resend_wait_seconds > 0 %}
+          Повтор через {{ verification.resend_wait_seconds }} с
+          {% else %}
+          Надіслати код ще раз
+          {% endif %}
+        </button>
+      </form>
+      <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="verification_action" value="cancel">
+        <button type="submit" class="stitch-btn stitch-btn--soft w-full">Скасувати</button>
+      </form>
+    </div>
+  </div>
+</div>
+<script>
+  document.body.classList.add("qp-modal-open");
+</script>

@@ -1,0 +1,23 @@
+{% load price_tags %}
+<div id="np-estimate-hidden" class="space-y-3">
+  <input type="hidden" name="np_estimate_min" value="{{ estimate_min|default:'' }}">
+  <input type="hidden" name="np_estimate_max" value="{{ estimate_max|default:'' }}">
+
+  {% if estimate_message %}
+    <p class="text-xs text-zinc-500">{{ estimate_message }}</p>
+  {% endif %}
+</div>
+
+{% if emit_oob %}
+  {% if estimate_min and estimate_max %}
+    {% if estimate_min == estimate_max %}
+      <span id="checkout-delivery-value" data-base-text="За тарифами НП" data-pickup-text="Самовивіз" class="font-bold text-zinc-900 italic text-xs" hx-swap-oob="true">{{ estimate_max|uah }} грн</span>
+    {% else %}
+      <span id="checkout-delivery-value" data-base-text="За тарифами НП" data-pickup-text="Самовивіз" class="font-bold text-zinc-900 italic text-xs" hx-swap-oob="true">{{ estimate_min|uah }}-{{ estimate_max|uah }} грн</span>
+    {% endif %}
+  {% else %}
+    <span id="checkout-delivery-value" data-base-text="За тарифами НП" data-pickup-text="Самовивіз" class="font-bold text-zinc-900 italic text-xs" hx-swap-oob="true">За тарифами НП</span>
+  {% endif %}
+  <span id="checkout-total-value" data-base-text="{{ checkout_total_base|default:checkout_total|uah }} грн" data-pickup-text="{{ cart_total|uah }} грн" class="block text-3xl font-light tracking-tighter text-zinc-900" hx-swap-oob="true">{{ checkout_total|uah }} грн</span>
+{% endif %}
+

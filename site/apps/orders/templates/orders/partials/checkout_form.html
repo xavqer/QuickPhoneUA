@@ -1,0 +1,264 @@
+{% load price_tags %}
+{% if cart_products %}
+  <div id="checkout-content" class="grid lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+    <form
+      id="checkout-form"
+      method="post"
+      action="{% url 'orders:checkout_submit' %}"
+      hx-post="{% url 'orders:checkout_submit' %}"
+      hx-target="#checkout-root"
+      hx-swap="innerHTML"
+      class="lg:col-span-7 space-y-10"
+    >
+      {% csrf_token %}
+
+      <div class="pl-2">
+        <div class="flex items-center gap-3 text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-4">
+          <span>Кошик</span>
+          <span class="material-symbols-outlined text-[12px]">arrow_forward_ios</span>
+          <span class="qp-glass-soft text-zinc-900 px-3 py-1 rounded-full shadow-sm">Інформація</span>
+          <span class="material-symbols-outlined text-[12px]">arrow_forward_ios</span>
+          <span class="cursor-not-allowed">Доставка</span>
+        </div>
+        <h1 class="text-4xl font-light text-zinc-900 tracking-tighter">
+          Оформлення <br><span class="font-bold">замовлення</span>
+        </h1>
+      </div>
+
+      {% if not request.user.is_authenticated %}
+        <div class="qp-glass-soft rounded-2xl px-5 py-4 border border-white/80">
+          <p class="text-xs uppercase font-bold tracking-[0.16em] text-zinc-500">Вже маєте акаунт?</p>
+          <p class="mt-1 text-sm text-zinc-700">
+            <a
+              href="{% url 'users:login' %}?next={{ request.path|urlencode }}"
+              class="font-semibold text-zinc-900 hover:text-zinc-600 transition-colors"
+            >Увійти</a>, щоб швидше оформлювати наступні замовлення.
+          </p>
+        </div>
+      {% endif %}
+
+      {% if site_contacts.manager_telegram_url or site_contacts.phone_e164 %}
+        <div class="qp-glass-soft stitch-checkout-support rounded-2xl px-5 py-4 border border-white/80">
+          <p class="text-xs uppercase font-bold tracking-[0.16em] text-zinc-500">Потрібна допомога з оформленням?</p>
+          <div class="stitch-checkout-support__actions mt-2">
+            {% if site_contacts.manager_telegram_url %}
+            <a
+              href="{{ site_contacts.manager_telegram_url }}"
+              class="stitch-footer-link stitch-footer-link--contact"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {{ site_contacts.manager_label }}
+            </a>
+            {% endif %}
+            {% if site_contacts.phone_e164 and site_contacts.phone_display %}
+            <a href="tel:{{ site_contacts.phone_e164 }}" class="stitch-footer-link stitch-footer-link--contact">
+              {{ site_contacts.phone_display }}
+            </a>
+            {% endif %}
+          </div>
+        </div>
+      {% endif %}
+
+      {% if top_error %}
+        <div class="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{{ top_error }}</div>
+      {% endif %}
+
+      <section class="qp-glass-section rounded-[2.5rem] p-8 relative overflow-hidden" data-checkout-step="contact">
+        <div class="absolute -top-20 -right-20 w-64 h-64 bg-white/30 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="flex items-center gap-4 mb-8 relative z-10">
+          <div data-checkout-step-badge class="w-10 h-10 rounded-full bg-zinc-900 text-white flex items-center justify-center font-bold text-sm transition-colors duration-200">01</div>
+          <h2 class="text-sm font-bold uppercase tracking-widest text-zinc-900">Контактні дані</h2>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-6 relative z-10">
+          <div class="space-y-2">
+            <label for="id_contact_last_name" class="text-[10px] uppercase font-bold text-zinc-500 tracking-wider ml-4">{{ form.contact_last_name.label }}</label>
+            {{ form.contact_last_name }}
+            {% if form.contact_last_name.errors %}<small class="text-sm text-red-600 ml-4">{{ form.contact_last_name.errors|join:', ' }}</small>{% endif %}
+          </div>
+
+          <div class="space-y-2">
+            <label for="id_contact_first_name" class="text-[10px] uppercase font-bold text-zinc-500 tracking-wider ml-4">{{ form.contact_first_name.label }}</label>
+            {{ form.contact_first_name }}
+            {% if form.contact_first_name.errors %}<small class="text-sm text-red-600 ml-4">{{ form.contact_first_name.errors|join:', ' }}</small>{% endif %}
+          </div>
+
+          <div class="space-y-2">
+            <label for="id_contact_middle_name" class="text-[10px] uppercase font-bold text-zinc-500 tracking-wider ml-4">{{ form.contact_middle_name.label }}</label>
+            {{ form.contact_middle_name }}
+            {% if form.contact_middle_name.errors %}<small class="text-sm text-red-600 ml-4">{{ form.contact_middle_name.errors|join:', ' }}</small>{% endif %}
+          </div>
+
+          <div class="space-y-2">
+            <label for="id_contact_phone" class="text-[10px] uppercase font-bold text-zinc-500 tracking-wider ml-4">{{ form.contact_phone.label }}</label>
+            {{ form.contact_phone }}
+            {% if form.contact_phone.errors %}<small class="text-sm text-red-600 ml-4">{{ form.contact_phone.errors|join:', ' }}</small>{% endif %}
+          </div>
+
+          <div class="space-y-2 lg:col-span-2">
+            <label for="id_contact_telegram" class="text-[10px] uppercase font-bold text-zinc-500 tracking-wider ml-4">{{ form.contact_telegram.label }}</label>
+            {{ form.contact_telegram }}
+            {% if form.contact_telegram.errors %}<small class="text-sm text-red-600 ml-4">{{ form.contact_telegram.errors|join:', ' }}</small>{% endif %}
+          </div>
+        </div>
+      </section>
+
+      <section class="qp-glass-section rounded-[2.5rem] p-8 relative overflow-hidden" data-checkout-step="delivery">
+        <div class="absolute -bottom-20 -left-20 w-64 h-64 bg-white/30 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="flex items-center gap-4 mb-8 relative z-10">
+          <div data-checkout-step-badge class="w-10 h-10 rounded-full bg-white text-zinc-900 flex items-center justify-center font-bold text-sm transition-colors duration-200">02</div>
+          <h2 class="text-sm font-bold uppercase tracking-widest text-zinc-900">Спосіб отримання</h2>
+        </div>
+
+        <div class="space-y-6 relative z-10">
+          <div class="space-y-3">
+            <p class="text-[10px] uppercase font-bold text-zinc-500 tracking-wider ml-4">{{ form.delivery_method.label }}</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <label class="qp-glass-soft flex items-center gap-3 rounded-2xl px-4 py-3 border border-white/80 cursor-pointer">
+                <input
+                  type="radio"
+                  id="id_delivery_method_nova_poshta"
+                  name="delivery_method"
+                  value="nova_poshta"
+                  class="h-4 w-4 accent-zinc-900"
+                  {% if form.delivery_method.value == 'pickup' %}{% else %}checked{% endif %}
+                >
+                <span class="text-sm font-medium text-zinc-900">Нова Пошта</span>
+              </label>
+              <label class="qp-glass-soft flex items-center gap-3 rounded-2xl px-4 py-3 border border-white/80 cursor-pointer">
+                <input
+                  type="radio"
+                  id="id_delivery_method_pickup"
+                  name="delivery_method"
+                  value="pickup"
+                  class="h-4 w-4 accent-zinc-900"
+                  {% if form.delivery_method.value == 'pickup' %}checked{% endif %}
+                >
+                <span class="text-sm font-medium text-zinc-900">Самовивіз</span>
+              </label>
+            </div>
+            {% if form.delivery_method.errors %}<small class="text-sm text-red-600 ml-4">{{ form.delivery_method.errors|join:', ' }}</small>{% endif %}
+          </div>
+
+          <div id="np-delivery-fields" class="space-y-6 {% if form.delivery_method.value == 'pickup' %}hidden{% endif %}">
+            <div class="space-y-2">
+              <label for="id_np_city_name" class="text-[10px] uppercase font-bold text-zinc-500 tracking-wider ml-4">{{ form.np_city_name.label }}</label>
+              {{ form.np_city_name }}
+              {% if form.np_city_name.errors %}<small class="text-sm text-red-600 ml-4">{{ form.np_city_name.errors|join:', ' }}</small>{% endif %}
+            </div>
+
+            {{ form.np_city_ref }}
+
+            <div
+              id="np-city-results"
+              class="space-y-2"
+              hx-get="{% url 'orders:np_city_search' %}"
+              hx-trigger="keyup changed delay:300ms from:#id_np_city_name"
+              hx-target="#np-city-results"
+              hx-include="#id_np_city_name"
+              hx-swap="innerHTML"
+            ></div>
+
+            <div id="np-warehouse-container">
+              {% include "orders/partials/np_warehouse_options.html" with warehouses=None city_ref='' error_type='' message='' %}
+            </div>
+
+            {% include "orders/partials/np_estimate_hidden.html" with estimate_min='' estimate_max='' estimate_message='' cart_total=cart_total commission_fee=commission_fee checkout_total=checkout_total checkout_total_base=checkout_total %}
+          </div>
+        </div>
+      </section>
+
+      <button type="submit" class="stitch-btn stitch-btn--solid add-cart checkout-submit checkout-submit--desktop w-full py-5 px-6 font-bold items-center justify-center gap-3 group relative overflow-hidden">
+        <span class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></span>
+        <span class="relative uppercase text-xs tracking-[0.2em] z-10">Підтвердити замовлення</span>
+        <span class="relative material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform z-10">arrow_forward</span>
+      </button>
+    </form>
+
+    <div class="lg:col-span-5 lg:pt-[12.5rem]">
+      <div class="qp-glass-section rounded-[3rem] sticky top-28 overflow-hidden">
+        <div class="p-8">
+          <div class="flex items-center justify-between mb-8">
+            <h2 class="text-xs font-bold uppercase tracking-[0.2em] text-zinc-900">Ваше замовлення</h2>
+            <span class="qp-glass-soft text-zinc-900 text-[10px] font-bold px-3 py-1.5 rounded-full shadow-sm">{{ cart_count }} товари</span>
+          </div>
+
+          <div class="space-y-4 mb-8 max-h-[320px] overflow-y-auto pr-1">
+            {% for product in cart_products %}
+              <div class="qp-glass-soft flex gap-4 items-center p-3 rounded-3xl">
+                <div class="w-16 h-16 rounded-2xl p-1 shadow-sm flex-shrink-0 flex items-center justify-center">
+                  {% with image=product.images.first %}
+                    {% if image %}
+                      <img src="{{ image.image.url }}" alt="{{ product.title }}" class="w-full h-full object-contain" loading="lazy" decoding="async">
+                    {% else %}
+                      <span class="material-symbols-outlined text-zinc-400">image</span>
+                    {% endif %}
+                  {% endwith %}
+                </div>
+                <div class="flex-1 min-w-0 py-1">
+                  <h3 class="text-sm font-bold text-zinc-900 truncate">{{ product.title }}</h3>
+                  <p class="text-[10px] text-zinc-500 uppercase tracking-tight mb-2">1 шт.</p>
+                  <div class="mt-2 flex flex-wrap items-center justify-between gap-2">
+                    <span class="qp-glass-soft whitespace-nowrap text-sm font-medium text-zinc-900 px-2 py-1 rounded-lg">{{ product.price_uah|uah }} грн</span>
+                    <button
+                      type="button"
+                      class="stitch-btn stitch-btn--soft px-3 py-1.5 text-[10px] uppercase tracking-wider"
+                      hx-post="{% url 'orders:checkout_remove' %}"
+                      hx-vals='{"product_id": "{{ product.id }}"}'
+                      hx-include="#checkout-content form"
+                      hx-target="#checkout-root"
+                      hx-swap="innerHTML"
+                    >
+                      Видалити
+                    </button>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+
+          <div class="qp-glass-soft space-y-3 mb-8 p-6 rounded-[2rem] shadow-inner">
+            <div class="flex justify-between text-xs">
+              <span class="text-zinc-600 font-medium">Товари ({{ cart_count }})</span>
+              <span class="font-bold text-zinc-900">{{ cart_total|uah }} грн</span>
+            </div>
+            <div class="flex justify-between text-xs">
+              <span class="text-zinc-600 font-medium">Доставка</span>
+              <span id="checkout-delivery-value" data-base-text="За тарифами НП" data-pickup-text="Самовивіз" class="font-bold text-zinc-900 italic text-xs">{% if form.delivery_method.value == 'pickup' %}Самовивіз{% else %}За тарифами НП{% endif %}</span>
+            </div>
+            <div class="flex justify-between text-xs">
+              <span class="text-zinc-600 font-medium">Комісія</span>
+              <span class="font-bold text-zinc-900" id="checkout-commission-value" data-base-text="{{ commission_fee|uah }} грн" data-pickup-text="0 грн">{% if form.delivery_method.value == 'pickup' %}0 грн{% else %}{{ commission_fee|uah }} грн{% endif %}</span>
+            </div>
+            <div class="pt-4 mt-4 border-t border-dashed border-zinc-400/30 flex justify-between items-end">
+              <span class="text-sm font-bold uppercase tracking-widest text-zinc-900">Всього</span>
+              <div class="text-right">
+                <span id="checkout-total-value" data-base-text="{{ checkout_total|uah }} грн" data-pickup-text="{{ cart_total|uah }} грн" class="block text-3xl font-light tracking-tighter text-zinc-900">{% if form.delivery_method.value == 'pickup' %}{{ cart_total|uah }}{% else %}{{ checkout_total|uah }}{% endif %} <span class="text-base font-normal align-top">грн</span></span>
+              </div>
+            </div>
+          </div>
+
+          <p class="text-center text-[9px] text-zinc-500 leading-relaxed uppercase tracking-wider">
+            Безпечна оплата та захист даних
+          </p>
+        </div>
+      </div>
+    </div>
+    <button
+      type="submit"
+      form="checkout-form"
+      class="stitch-btn stitch-btn--solid add-cart checkout-submit checkout-submit--mobile w-full py-5 px-6 font-bold items-center justify-center gap-3 group relative overflow-hidden lg:col-span-7"
+    >
+      <span class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></span>
+      <span class="relative uppercase text-xs tracking-[0.2em] z-10">Підтвердити замовлення</span>
+      <span class="relative material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform z-10">arrow_forward</span>
+    </button>
+  </div>
+{% else %}
+  <div class="stitch-checkout-card" id="checkout-content">
+    <p>Ваш кошик порожній.</p>
+    <a href="{% url 'catalog:list' %}" class="stitch-btn stitch-btn--soft">Перейти до каталогу</a>
+  </div>
+{% endif %}
+

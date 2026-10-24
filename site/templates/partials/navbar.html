@@ -1,0 +1,166 @@
+<header class="stitch-header">
+  <div class="stitch-header__inner">
+    <div class="stitch-brand-wrap">
+      <a href="{% url 'home' %}" class="stitch-brand stitch-logo-b" aria-label="QuickPhone UA">
+        <span class="stitch-logo-b__orb" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <rect x="4" y="1.5" width="10" height="15" rx="2.8" fill="#202531" opacity="0.18"/>
+            <rect x="5.5" y="3.5" width="7" height="9" rx="1.5" fill="#202531" opacity="0.08"/>
+            <circle cx="9" cy="14.2" r="0.9" fill="#202531" opacity="0.2"/>
+            <polygon points="10.5,5.5 7.2,9.5 9,9.5 7.5,12.5 11.5,8 9.5,8 10.8,5.5" fill="#202531" opacity="0.75"/>
+          </svg>
+        </span>
+        <span class="stitch-logo-b__wordmark">
+          <span class="stitch-logo-b__quick">Quick</span>
+          <span class="stitch-logo-b__sep" aria-hidden="true"></span>
+          <span class="stitch-logo-b__phone">Phone</span>
+          <span class="stitch-logo-b__ua-chip">UA</span>
+        </span>
+      </a>
+    </div>
+
+    {% with ns=request.resolver_match.namespace current=request.resolver_match.url_name %}
+    <details class="stitch-catalog-menu stitch-header-catalog--left" data-catalog-menu data-catalog-url="{% url 'catalog:list' %}">
+      <summary
+        class="stitch-nav-link stitch-catalog-menu__trigger{% if ns == 'catalog' %} is-active{% endif %}"
+        data-catalog-menu-trigger
+        aria-haspopup="menu"
+        aria-expanded="false"
+      >
+        <span>Каталог</span>
+        <span class="material-symbols-outlined stitch-catalog-menu__chevron" aria-hidden="true">expand_more</span>
+      </summary>
+      <div class="stitch-catalog-menu__panel" data-catalog-menu-panel>
+        <div class="stitch-catalog-menu__group">
+          <p class="stitch-catalog-menu__title">Категорії</p>
+          <a
+            class="stitch-nav-link stitch-catalog-menu__item stitch-catalog-menu__item--all{% if ns == 'catalog' and current == 'list' and not request.GET.category and not request.GET.brand %} is-active-item{% endif %}"
+            href="{% url 'catalog:list' %}"
+            data-catalog-link
+          >
+            Усі товари
+          </a>
+          {% for item in header_nav_categories %}
+          <a
+            class="stitch-nav-link stitch-catalog-menu__item{% if ns == 'catalog' and current == 'list' and request.GET.category == item.slug %} is-active-item{% endif %}"
+            href="{% url 'catalog:list' %}?category={{ item.slug }}"
+            data-catalog-link
+          >
+            {{ item.name }}
+          </a>
+          {% empty %}
+          <p class="stitch-catalog-menu__empty">Категорії незабаром</p>
+          {% endfor %}
+        </div>
+        <div class="stitch-catalog-menu__group">
+          <p class="stitch-catalog-menu__title">Бренди</p>
+          {% for brand in header_nav_brands %}
+          <a
+            class="stitch-nav-link stitch-catalog-menu__item{% if ns == 'catalog' and current == 'list' and request.GET.brand == brand %} is-active-item{% endif %}"
+            href="{% url 'catalog:list' %}?brand={{ brand|urlencode }}"
+            data-catalog-link
+          >
+            {{ brand }}
+          </a>
+          {% empty %}
+          <p class="stitch-catalog-menu__empty">Бренди незабаром</p>
+          {% endfor %}
+        </div>
+      </div>
+    </details>
+    {% endwith %}
+
+    <form
+      class="stitch-header-search"
+      action="{% url 'catalog:list' %}"
+      method="get"
+      role="search"
+      data-header-search-form
+      data-search-suggest-url="{% url 'catalog:search_suggestions' %}"
+    >
+      <label class="stitch-header-search__field">
+        <span class="material-symbols-outlined" aria-hidden="true">search</span>
+        <input
+          type="search"
+          name="q"
+          value="{{ request.GET.q|default:'' }}"
+          placeholder="Пошук у каталозі"
+          autocomplete="off"
+          data-header-search
+          aria-autocomplete="list"
+          aria-expanded="false"
+          aria-controls="header-search-suggestions"
+          {% if request.resolver_match.namespace == "catalog" %}data-catalog-header-search="true"{% endif %}
+        >
+      </label>
+      <div id="header-search-suggestions" class="stitch-header-search__suggestions" data-search-suggestions hidden>
+        <ul class="stitch-header-search__suggestions-list" data-search-suggestions-list></ul>
+      </div>
+    </form>
+
+    <button
+      class="stitch-nav-toggle"
+      type="button"
+      aria-expanded="false"
+      aria-controls="primary-nav"
+      aria-label="Меню"
+      title="Меню"
+      data-nav-toggle
+    >
+      <span class="material-symbols-outlined stitch-nav-toggle__icon" aria-hidden="true">menu</span>
+    </button>
+
+    <nav id="primary-nav" class="stitch-nav" data-nav>
+      {% with ns=request.resolver_match.namespace current=request.resolver_match.url_name %}
+      {% if request.user.is_authenticated %}
+      <details class="stitch-profile-menu" data-profile-menu data-profile-url="{% url 'users:profile' %}">
+        <summary class="stitch-nav-link stitch-profile-menu__trigger" title="{{ request.user.phone|default:request.user.username }}">
+          <span class="stitch-profile-menu__label">
+            {% if request.user.first_name or request.user.last_name %}
+            {{ request.user.last_name }} {{ request.user.first_name }}
+            {% else %}
+            {{ request.user.phone|default:request.user.username }}
+            {% endif %}
+          </span>
+          <span class="material-symbols-outlined stitch-profile-menu__chevron" aria-hidden="true">expand_more</span>
+        </summary>
+        <div class="stitch-profile-menu__panel" data-profile-menu-panel>
+          <form method="post" action="{% url 'users:logout' %}" class="stitch-nav-form stitch-profile-menu__item-wrap">
+            {% csrf_token %}
+            <button class="stitch-nav-link stitch-nav-link--button stitch-profile-menu__item stitch-profile-menu__item--action" type="submit">
+              <span class="material-symbols-outlined" aria-hidden="true">logout</span>
+              <span>Вийти</span>
+            </button>
+          </form>
+        </div>
+      </details>
+      {% else %}
+      {% if ns == "users" and current == "login" or ns == "users" and current == "register" %}
+      <span class="stitch-nav-link is-current" aria-current="page">Увійти / Реєстрація</span>
+      {% else %}
+      <a class="stitch-nav-link" href="{% url 'users:login' %}">Увійти / Реєстрація</a>
+      {% endif %}
+      {% endif %}
+      {% endwith %}
+    </nav>
+
+    <button class="stitch-btn stitch-btn--soft stitch-cart-toggle" type="button" aria-pressed="false" aria-label="Кошик" title="Кошик" data-cart-open>
+      <span class="stitch-cart-toggle__glyph" aria-hidden="true">
+        <svg class="stitch-cart-toggle__svg" viewBox="0 0 24 24" fill="none">
+          <circle cx="10" cy="19" r="1.55"></circle>
+          <circle cx="17.2" cy="19" r="1.55"></circle>
+          <path d="M3.2 5.2h2.15l1.48 8.38a1.1 1.1 0 0 0 1.08.92h8.42a1.1 1.1 0 0 0 1.05-.79l1.82-6.05H7.55"></path>
+          <path d="M8.55 9.1h10.15"></path>
+          <path d="M9.55 11.9h8.1"></path>
+        </svg>
+      </span>
+      <span
+        id="cart-badge"
+        class="stitch-badge"
+        hx-get="{% url 'orders:cart_badge' %}"
+        hx-trigger="load, cart-updated from:body"
+        hx-swap="outerHTML"
+      >0</span>
+    </button>
+  </div>
+</header>

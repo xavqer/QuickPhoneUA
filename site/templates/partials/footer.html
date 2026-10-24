@@ -1,0 +1,96 @@
+<footer class="mt-auto border-t border-white/50 bg-white/35 backdrop-blur-xl py-10 sm:py-12">
+  <div class="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 stitch-footer-layout">
+    <div class="stitch-footer-col stitch-footer-col--brand">
+      <a href="{% url 'home' %}" class="stitch-footer-brand stitch-footer-brand--lg" aria-label="QuickPhone UA">
+        <span class="stitch-footer-brand__orb" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 18 18" fill="none">
+            <rect x="4" y="1.5" width="10" height="15" rx="2.8" fill="#202531" opacity="0.18"/>
+            <rect x="5.5" y="3.5" width="7" height="9" rx="1.5" fill="#202531" opacity="0.08"/>
+            <circle cx="9" cy="14.2" r="0.9" fill="#202531" opacity="0.2"/>
+            <polygon points="10.5,5.5 7.2,9.5 9,9.5 7.5,12.5 11.5,8 9.5,8 10.8,5.5" fill="#202531" opacity="0.75"/>
+          </svg>
+        </span>
+        <span class="stitch-footer-brand__wordmark">
+          <span class="stitch-footer-brand__quick">Quick</span>
+          <span class="stitch-footer-brand__sep" aria-hidden="true"></span>
+          <span class="stitch-footer-brand__phone">Phone</span>
+          <span class="stitch-footer-brand__ua-chip">UA</span>
+        </span>
+      </a>
+    </div>
+
+    <section class="stitch-footer-col stitch-footer-col--contact stitch-footer-contact" aria-label="Контакти">
+      <p class="stitch-footer-contact__label">Зв'язок</p>
+      <div class="stitch-footer-contact__actions">
+        {% if site_contacts.manager_telegram_url %}
+        <a
+          href="{{ site_contacts.manager_telegram_url }}"
+          class="stitch-footer-link stitch-footer-link--contact"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {{ site_contacts.manager_label }} в Telegram
+        </a>
+        {% endif %}
+        {% if site_contacts.phone_e164 and site_contacts.phone_display %}
+        <a href="tel:{{ site_contacts.phone_e164 }}" class="stitch-footer-link stitch-footer-link--contact">
+          Зателефонувати: {{ site_contacts.phone_display }}
+        </a>
+        {% endif %}
+      </div>
+    </section>
+
+    <div class="stitch-footer-col stitch-footer-col--meta stitch-footer-meta">
+      <nav class="stitch-footer-links" aria-label="Швидкі посилання">
+        <a href="{% url 'privacy_policy' %}" class="stitch-footer-link">Політика конфіденційності</a>
+      </nav>
+      <div class="stitch-footer-socials" aria-label="Соціальні мережі">
+        {% if site_contacts.instagram_url %}
+        <a
+          href="{{ site_contacts.instagram_url }}"
+          class="stitch-footer-social-link"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Instagram"
+          title="Instagram"
+        >
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" aria-hidden="true">
+            <rect x="4.5" y="4.5" width="15" height="15" rx="4.5" stroke="currentColor" stroke-width="1.8"/>
+            <circle cx="12" cy="12" r="3.6" stroke="currentColor" stroke-width="1.8"/>
+            <circle cx="16.9" cy="7.3" r="1.05" fill="currentColor"/>
+          </svg>
+        </a>
+        {% endif %}
+        {% if site_contacts.telegram_url %}
+        <a
+          href="{{ site_contacts.telegram_url }}"
+          class="stitch-footer-social-link"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Telegram"
+          title="Telegram"
+        >
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" aria-hidden="true">
+            <path d="M20.6 4.35L3.72 10.91c-.84.33-.82 1.53.03 1.83l3.85 1.35 1.53 4.61c.29.87 1.48.97 1.91.15l2.28-4.34 4.11 3.06c.72.54 1.74.15 1.92-.73l2.22-10.9c.2-.95-.74-1.74-1.63-1.39zM9.86 13.8l7.91-6.46-6.13 8.2-.63 1.15-.67-2.89-.48-.35z" fill="currentColor"/>
+          </svg>
+        </a>
+        {% endif %}
+        {% if site_contacts.tiktok_url %}
+        <a
+          href="{{ site_contacts.tiktok_url }}"
+          class="stitch-footer-social-link"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="TikTok"
+          title="TikTok"
+        >
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" aria-hidden="true">
+            <path d="M13.95 4.25v8.62a3.8 3.8 0 1 1-2.58-3.6V7.42a5.7 5.7 0 1 0 4.5 5.57V8.9a6.44 6.44 0 0 0 3.55 1.12V7.9a4.38 4.38 0 0 1-3.55-3.65h-1.92z" fill="currentColor"/>
+          </svg>
+        </a>
+        {% endif %}
+      </div>
+      <p class="text-[11px] text-zinc-500">&copy; {% now "Y" %} QuickPhone UA. Усі права захищено.</p>
+    </div>
+  </div>
+</footer>

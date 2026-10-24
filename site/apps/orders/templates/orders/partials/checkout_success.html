@@ -1,0 +1,54 @@
+{% load price_tags %}
+<div id="checkout-content" class="max-w-3xl mx-auto rounded-[2.5rem] border border-white/70 bg-white/45 backdrop-blur-xl p-8 shadow-[0_20px_50px_rgba(0,0,0,.08)]">
+  <h1 class="text-3xl font-light tracking-tight text-zinc-900">Дякуємо, замовлення оформлено</h1>
+  <p class="mt-2 text-zinc-600">Ми зв'яжемось із вами найближчим часом для підтвердження.</p>
+  <p class="mt-4 text-sm"><strong>Номер замовлення:</strong> #{{ order.id }}</p>
+
+  <div class="mt-6 rounded-2xl border border-white/70 bg-white/65 p-4">
+    <h3 class="text-xs font-bold uppercase tracking-wider text-zinc-700">Деталі замовлення</h3>
+    <p class="mt-2 text-sm"><strong>Спосіб отримання:</strong> {{ order.get_delivery_method_display_uk }}</p>
+    {% if order.delivery_method == 'nova_poshta' %}
+      <p class="text-sm"><strong>Місто:</strong> {{ order.np_city_name }}</p>
+      <p class="text-sm"><strong>Відділення:</strong> {{ order.np_warehouse_name }}</p>
+    {% endif %}
+    <p class="text-sm"><strong>Сума товарів:</strong> {{ cart_total|uah }} грн</p>
+    {% if order.delivery_method == 'nova_poshta' %}
+      <p class="text-sm"><strong>Комісія:</strong> {{ commission_fee|uah }} грн</p>
+      {% if estimate_range %}
+        <p class="text-sm">
+          <strong>Орієнтовна вартість доставки:</strong>
+          {% if estimate_range.min == estimate_range.max %}
+            {{ estimate_range.max|uah }} грн
+          {% else %}
+            {{ estimate_range.min|uah }}-{{ estimate_range.max|uah }} грн
+          {% endif %}
+        </p>
+      {% endif %}
+    {% endif %}
+    <p class="text-sm font-bold"><strong>До сплати:</strong> {{ checkout_total|uah }} грн</p>
+  </div>
+
+  {% if register_after_checkout_url %}
+    <div class="mt-6 rounded-2xl border border-white/80 bg-white/70 p-5">
+      <p class="text-[10px] uppercase font-bold tracking-[0.16em] text-zinc-500">Швидкий акаунт</p>
+      <h2 class="mt-2 text-xl font-light tracking-tight text-zinc-900">
+        Створіть профіль за <span class="font-bold">20 секунд</span>
+      </h2>
+      <p class="mt-2 text-sm text-zinc-600">Збережемо ваші контактні дані та покажемо історію замовлень в одному місці.</p>
+      <a href="{{ register_after_checkout_url }}" class="stitch-btn stitch-btn--solid add-cart mt-4">Створити акаунт за 20 секунд</a>
+    </div>
+  {% endif %}
+
+  <a href="{% url 'catalog:list' %}" class="stitch-btn stitch-btn--solid mt-6">Продовжити покупки</a>
+
+  <span id="cart-badge" class="stitch-badge" hx-swap-oob="true">0</span>
+  <aside id="cart-panel" class="stitch-cart-panel" hx-swap-oob="true">
+    <div class="rounded-[2rem] border border-white/70 bg-white/60 p-5 backdrop-blur-md">
+      <div class="stitch-cart-head">
+        <h3 class="text-sm font-bold uppercase tracking-wider">Кошик</h3>
+        <span class="stitch-chip stitch-chip--muted">0 шт</span>
+      </div>
+      <p class="text-sm text-zinc-600">Ваш кошик порожній.</p>
+    </div>
+  </aside>
+</div>

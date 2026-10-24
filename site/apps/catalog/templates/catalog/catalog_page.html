@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Каталог QuickPhoneUA - вживані iPhone, Samsung та інші смартфони{% endblock %}
+{% block meta_description %}Оберіть вживані телефони та смартфони б/у в QuickPhone: актуальні моделі в наявності, реальні фото, перевірений стан і доставка по Україні.{% endblock %}
+{% block meta_robots %}{% if filters_applied or request.GET.page %}noindex,follow{% else %}index,follow{% endif %}{% endblock %}
+{% block body_class %}bg-[#eef0f4] font-display text-slate-700 min-h-screen flex flex-col antialiased{% endblock %}
+{% block main_class %}flex-grow w-full max-w-[1480px] mx-auto px-4 md:px-8 py-10 md:py-16{% endblock %}
+
+{% block head_extra %}
+<script defer src="{% static 'js/catalog_filters.js' %}"></script>
+{% endblock %}
+
+{% block top_background %}
+<div class="fixed inset-0 z-[-1] pointer-events-none overflow-hidden">
+  <div class="absolute top-[-20%] left-[-10%] w-[70%] h-[70%] rounded-full bg-gradient-to-br from-sky-100/70 via-emerald-50/45 to-transparent blur-[120px]"></div>
+  <div class="absolute bottom-[-20%] right-[-10%] w-[80%] h-[80%] rounded-full bg-gradient-to-tl from-zinc-200/60 via-cyan-50/35 to-transparent blur-[120px]"></div>
+</div>
+{% endblock %}
+
+{% block content %}
+<section class="stitch-catalog" data-catalog-root>
+  <aside class="stitch-filters catalog-filters-offset" data-filter-panel>
+    <div class="sticky top-32">
+      {% include "catalog/partials/filter_panel.html" %}
+    </div>
+  </aside>
+  <div class="flex-1 min-w-0 stitch-catalog-main">
+    <div class="flex justify-center mb-4 md:mb-0">
+      <button type="button" class="stitch-btn stitch-btn--soft stitch-mobile-only" data-filter-open>Фільтри</button>
+    </div>
+    <div id="catalog-results">
+      {% include "catalog/partials/result_grid.html" %}
+    </div>
+  </div>
+</section>
+<div class="stitch-backdrop" data-filter-backdrop hidden></div>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% if page_obj.paginator.num_pages > 1 %}
+<nav class="stitch-pagination" aria-label="Пагінація каталогу">
+  {% if page_obj.has_previous %}
+    <a class="stitch-btn stitch-btn--soft" href="{% url 'catalog:list' %}?{% if base_query %}{{ base_query }}&{% endif %}page={{ page_obj.previous_page_number }}"
+       hx-get="{% url 'catalog:list' %}?{% if base_query %}{{ base_query }}&{% endif %}page={{ page_obj.previous_page_number }}"
+       hx-target="#catalog-results"
+       hx-push-url="true">Попередня</a>
+  {% endif %}
+  <span>Сторінка {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+  {% if page_obj.has_next %}
+    <a class="stitch-btn stitch-btn--soft" href="{% url 'catalog:list' %}?{% if base_query %}{{ base_query }}&{% endif %}page={{ page_obj.next_page_number }}"
+       hx-get="{% url 'catalog:list' %}?{% if base_query %}{{ base_query }}&{% endif %}page={{ page_obj.next_page_number }}"
+       hx-target="#catalog-results"
+       hx-push-url="true">Наступна</a>
+  {% endif %}
+</nav>
+{% endif %}
+

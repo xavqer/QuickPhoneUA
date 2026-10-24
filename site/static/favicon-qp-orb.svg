@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <radialGradient id="orb" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(24 20) rotate(42) scale(44)">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="0.55" stop-color="#e9f3f8"/>
+      <stop offset="1" stop-color="#d9e5ee"/>
+    </radialGradient>
+    <linearGradient id="screen" x1="26" y1="20" x2="38" y2="46" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#3a4252"/>
+      <stop offset="1" stop-color="#232938"/>
+    </linearGradient>
+  </defs>
+  <circle cx="32" cy="32" r="30" fill="url(#orb)"/>
+  <circle cx="32" cy="32" r="30" stroke="#f8fbff" stroke-width="2"/>
+  <circle cx="32" cy="32" r="18" stroke="#94d2ff" stroke-opacity="0.6"/>
+  <ellipse cx="32" cy="43.2" rx="9.5" ry="1.8" fill="#2b3445" fill-opacity="0.12"/>
+  <rect x="25.2" y="18" width="13.6" height="28" rx="3.6" fill="#202531" fill-opacity="0.86"/>
+  <rect x="26.8" y="21.3" width="10.4" height="19.6" rx="2.2" fill="url(#screen)"/>
+  <rect x="29.2" y="19.6" width="5.6" height="1.2" rx="0.6" fill="#8d96a6" fill-opacity="0.6"/>
+  <circle cx="32" cy="43.4" r="1.2" fill="#808a9a" fill-opacity="0.6"/>
+  <path d="M34.4 23.2L29.6 31.4H32.9L30.8 40L35.8 32.3H32.5L34.4 23.2Z" fill="#ffffff"/>
+</svg>

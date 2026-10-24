@@ -1,0 +1,69 @@
+﻿# Python / Django
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# Django local/runtime artifacts
+db.sqlite3
+db.sqlite3-*
+media/
+!site/db.sqlite3
+!site/media/
+site/media/*
+!site/media/demo/
+site/media/demo/*
+!site/media/demo/demo-*.png
+staticfiles/
+.env
+.env.*
+!.env.example
+
+# Tooling / test caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+
+# Local agent/runtime folders
+.tmp/
+.ai/
+.codex/
+
+# Non-Django local workflow artifacts
+.planning/
+.playwright-mcp/
+AGENTS.md
+USER_ARC.md
+
+# Safety net for accidental root runtime logs
+runserver-*.log
+
+# AI and design artifacts
+ai_artifacts/
+ref-*.png
+uat-*.png
+playwright-*.png
+*current-layout*.png
+*after-bom-fix*.png
+
+# Local image dropzone
+input_images/
+
+# Frontend tooling
+node_modules/
+site/static/css/tailwind.css
+site/static/css/tailwind.css.map
+npm-debug.log*

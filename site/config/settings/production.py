@@ -1,0 +1,16 @@
+import os
+
+from .base import *  # noqa: F403,F401
+
+DEBUG = False
+SITE_BASE_URL = os.getenv("SITE_BASE_URL", "https://quickphone.com.ua").rstrip("/")
+
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+SECURE_SSL_REDIRECT = True
+SECURE_HSTS_SECONDS = 31536000
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+SESSION_COOKIE_HTTPONLY = True
+X_FRAME_OPTIONS = "DENY"
+

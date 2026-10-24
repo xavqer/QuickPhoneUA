@@ -1,0 +1,91 @@
+<form
+  id="catalog-filter-form"
+  class="stitch-filter-card"
+  method="get"
+  action="{% url 'catalog:list' %}"
+  hx-get="{% url 'catalog:list' %}"
+  hx-target="#catalog-results"
+  hx-push-url="true"
+  data-price-floor="{{ price_floor }}"
+  data-price-ceiling="{{ price_ceiling }}"
+>
+  <input type="hidden" name="q" value="{{ search_query|default:'' }}" data-search-field>
+
+  <div class="stitch-filter-head">
+    <h2>Фільтри</h2>
+    <button type="button" class="stitch-btn stitch-btn--soft stitch-mobile-only" data-filter-close>Закрити</button>
+  </div>
+
+  <section class="stitch-filter-group">
+    <p class="stitch-filter-label">Категорія</p>
+    <input type="hidden" name="category" value="{{ selected_category }}" data-single-value="category">
+    <div class="stitch-pill-grid" data-single-group="category">
+      <button type="button" class="stitch-filter-pill{% if not selected_category %} is-active{% endif %}" data-single-option data-value="">
+        Всі
+      </button>
+      {% for slug, name in category_options %}
+        <button type="button" class="stitch-filter-pill{% if selected_category == slug %} is-active{% endif %}" data-single-option data-value="{{ slug }}">
+          {{ name }}
+        </button>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="stitch-filter-group">
+    <p class="stitch-filter-label">Бренд</p>
+    <div class="stitch-pill-grid" data-multi-group="brand">
+      {% for brand in brand_options %}
+        <button
+          type="button"
+          class="stitch-filter-pill{% if brand in selected_brands %} is-active{% endif %}"
+          data-multi-option
+          data-value="{{ brand }}"
+          aria-pressed="{% if brand in selected_brands %}true{% else %}false{% endif %}"
+        >
+          {{ brand }}
+        </button>
+      {% endfor %}
+    </div>
+    <div data-multi-inputs="brand" hidden>
+      {% for brand in selected_brands %}
+        <input type="hidden" name="brand" value="{{ brand }}">
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="stitch-filter-group">
+    <p class="stitch-filter-label">Ціна</p>
+    <div class="stitch-price-values">
+      <span data-price-min-label>{{ selected_min_price }}</span>
+      <span data-price-max-label>{{ selected_max_price }}</span>
+    </div>
+    <div class="stitch-range-stack">
+      <input type="range" min="{{ price_floor }}" max="{{ price_ceiling }}" step="500" value="{{ selected_min_price }}" data-price-min-range>
+      <input type="range" min="{{ price_floor }}" max="{{ price_ceiling }}" step="500" value="{{ selected_max_price }}" data-price-max-range>
+    </div>
+    <div class="stitch-price-hints">
+      <span>{{ price_floor }} грн</span>
+      <span>{{ price_ceiling }} грн</span>
+    </div>
+    <input
+      type="hidden"
+      name="min_price"
+      value="{% if selected_min_price > price_floor %}{{ selected_min_price }}{% endif %}"
+      data-price-min-input
+    >
+    <input
+      type="hidden"
+      name="max_price"
+      value="{% if selected_max_price < price_ceiling %}{{ selected_max_price }}{% endif %}"
+      data-price-max-input
+    >
+  </section>
+
+  <label class="stitch-field">
+    <span>Стан</span>
+    {{ form.condition }}
+  </label>
+
+  <button type="button" class="stitch-btn stitch-btn--soft" data-soft-reset>Скинути</button>
+</form>
+

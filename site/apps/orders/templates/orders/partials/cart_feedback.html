@@ -1,0 +1,17 @@
+{% if message %}
+<div class="stitch-feedback stitch-feedback--{{ level }} stitch-toast" role="status" data-feedback-toast>
+  <span class="material-symbols-outlined stitch-toast__icon" aria-hidden="true">
+    {% if level == "success" %}check_circle{% elif level == "info" %}inventory_2{% else %}error{% endif %}
+  </span>
+  <div class="stitch-toast__content">
+    <p class="stitch-toast__title">
+      {% if level == "success" %}Додано в кошик{% elif level == "info" %}Вже у кошику{% else %}Не вдалося додати{% endif %}
+    </p>
+    <p class="stitch-toast__message">{{ message }}</p>
+  </div>
+  <button type="button" class="stitch-toast__dismiss" data-feedback-dismiss aria-label="Закрити повідомлення">
+    <span class="material-symbols-outlined" aria-hidden="true">close</span>
+  </button>
+</div>
+{% endif %}
+

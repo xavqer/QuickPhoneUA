@@ -1,0 +1,4 @@
+django==5.2.18
+django-htmx==1.27.0
+psycopg[binary]==3.3.3
+Pillow==13.0.0

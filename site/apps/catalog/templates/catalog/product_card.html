@@ -1,0 +1,43 @@
+{% load price_tags %}
+<article class="stitch-product-card {% if not product.is_available %}is-unavailable{% endif %}">
+  <a class="stitch-product-card__media" href="{% url 'catalog:product_detail' pk=product.pk slug=product.title|slugify %}">
+    {% with primary=product.images.all|first %}
+      {% if primary %}
+        <img src="{{ primary.image.url }}" alt="{{ primary.alt_text|default:product.title }}" loading="lazy" decoding="async">
+      {% else %}
+        <div class="stitch-empty">Немає фото</div>
+      {% endif %}
+    {% endwith %}
+  </a>
+
+  <div class="stitch-product-card__body">
+    <a class="stitch-product-card__title" href="{% url 'catalog:product_detail' pk=product.pk slug=product.title|slugify %}">
+      {{ product.title }}
+    </a>
+    <p class="stitch-meta">{{ product.brand }} · {{ product.model_name }}</p>
+    <p class="stitch-meta">Стан {{ product.condition_score }} / 10</p>
+    <p class="stitch-price">{{ product.price_uah|uah }} грн</p>
+    <div class="stitch-product-card__actions">
+      {% if product.is_available %}
+        <span class="stitch-chip">В наявності</span>
+        <button
+          type="button"
+          class="stitch-btn stitch-btn--solid add-cart"
+          hx-post="{% url 'orders:cart_add' %}"
+          hx-vals='{"product_id": "{{ product.id }}"}'
+          hx-target="#global-feedback"
+          hx-swap="innerHTML"
+        >
+          Додати
+        </button>
+      {% else %}
+        <span class="stitch-chip stitch-chip--muted">Продано</span>
+        <button type="button" class="stitch-btn stitch-btn--soft add-cart" disabled>Недоступно</button>
+      {% endif %}
+    </div>
+  </div>
+</article>
+
+
+
+

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Quick Phone UA - Оформлення замовлення{% endblock %}
+{% block meta_robots %}noindex,nofollow{% endblock %}
+{% block body_class %}bg-[#eef1f6] text-zinc-800 font-display min-h-screen flex flex-col{% endblock %}
+{% block main_class %}flex-grow container mx-auto px-4 sm:px-6 lg:px-8 pb-8 max-w-[1240px]{% endblock %}
+
+{% block head_extra %}
+<script defer src="{% static 'js/np_checkout.js' %}?v=20261024-fixes"></script>
+{% endblock %}
+
+{% block content %}
+<section id="checkout-root">
+  {% include "orders/partials/checkout_form.html" %}
+</section>
+{% endblock %}

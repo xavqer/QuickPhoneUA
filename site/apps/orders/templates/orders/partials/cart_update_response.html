@@ -1,0 +1,4 @@
+{% include "orders/partials/cart_feedback.html" %}
+{% include "orders/partials/cart_badge.html" with swap_oob=True %}
+{% include "orders/partials/cart_panel.html" with swap_oob=True %}
+{% if form %}{% include "orders/partials/checkout_form.html" %}{% endif %}

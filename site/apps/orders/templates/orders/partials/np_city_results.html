@@ -1,0 +1,21 @@
+{% if error_type == 'timeout' or error_type == 'api' %}
+  <div class="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">Не вдалося знайти місто. Спробуйте ще раз.</div>
+{% elif query|length > 1 and not cities %}
+  <div class="rounded-2xl border border-zinc-200 bg-white/80 px-4 py-3 text-sm text-zinc-600">Нічого не знайдено. Продовжуйте вводити запит.</div>
+{% endif %}
+
+{% if cities %}
+  <div class="grid gap-2 max-h-[220px] overflow-y-auto rounded-2xl border border-white/70 bg-white/55 p-2 backdrop-blur-sm">
+    {% for city in cities %}
+      <button
+        type="button"
+        class="stitch-btn stitch-btn--soft justify-start np-city-option"
+        data-city-name="{{ city.name }}"
+        data-city-ref="{{ city.ref }}"
+        onclick="window.quickPhoneNPSelectCity(this); return false;"
+      >
+        {{ city.name }}
+      </button>
+    {% endfor %}
+  </div>
+{% endif %}

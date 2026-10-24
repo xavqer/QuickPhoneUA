@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% load static %}
+{% load price_tags %}
+
+{% block title %}{{ product.title }} б/у - ціна, фото, стан | QuickPhone{% endblock %}
+{% block meta_description %}Купити {{ product.title }} б/у в QuickPhone: реальні фото, перевірений стан, чесний опис і доставка по Україні.{% endblock %}
+{% block meta_robots %}{% if product.is_available %}index,follow{% else %}noindex,follow{% endif %}{% endblock %}
+{% block body_class %}font-display antialiased min-h-screen flex flex-col bg-[#f8f9fa]{% endblock %}
+{% block main_class %}flex-grow w-full max-w-[1440px] mx-auto px-4 md:px-6 lg:px-12 pt-24 md:pt-32 pb-10 md:pb-12{% endblock %}
+
+{% block head_extra %}
+<script defer src="{% static 'js/catalog_gallery.js' %}?v=20261024-fixes"></script>
+{% endblock %}
+
+{% block content %}
+<div class="mb-4 md:mb-6">
+  <a class="stitch-btn stitch-btn--soft w-fit" href="{% url 'catalog:list' %}" data-detail-back-link>
+    <span class="material-symbols-outlined" aria-hidden="true">arrow_back</span>
+    <span>Повернутися до каталогу</span>
+  </a>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+  <section class="space-y-4 md:space-y-6" data-gallery>
+    {% if primary_image %}
+      <img id="detail-hero-image" class="w-full aspect-square object-contain liquid-glass rounded-[2rem] md:rounded-[3rem] p-5 md:p-10" src="{{ primary_image.image.url }}" alt="{{ primary_image.alt_text|default:product.title }}" fetchpriority="high" decoding="async">
+    {% else %}
+      <div class="w-full aspect-square liquid-glass rounded-[2rem] md:rounded-[3rem] p-5 md:p-10 grid place-items-center text-gray-500">Немає доступного фото</div>
+    {% endif %}
+    {% if images|length > 1 %}
+      <div class="grid grid-cols-4 gap-3 md:gap-4">
+        {% for image in images %}
+          <button class="stitch-thumb {% if image == primary_image %}is-active{% endif %}" type="button" data-thumb-src="{{ image.image.url }}" data-thumb-alt="{{ image.alt_text|default:product.title }}">
+            <img class="w-full h-full object-cover" src="{{ image.image.url }}" alt="{{ image.alt_text|default:product.title }}" loading="lazy" decoding="async">
+          </button>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </section>
+
+  <div class="stitch-detail-summary-stack">
+    <section class="stitch-detail-summary-panel flex flex-col pt-1 md:pt-4 gap-4 md:gap-5">
+      <h1 class="text-[2.6rem] sm:text-5xl xl:text-6xl leading-[0.92] font-extrabold tracking-tighter">{{ product.title }}</h1>
+      <p class="stitch-meta text-sm uppercase tracking-widest text-gray-500">Стан {{ product.condition_score }} / 10</p>
+      <p class="text-[2.55rem] sm:text-5xl font-black">{{ product.price_uah|uah }} грн</p>
+      <span class="inline-flex w-fit px-3.5 py-1.5 rounded-full text-[0.68rem] sm:text-xs font-bold tracking-wider {% if product.is_available %}bg-emerald-100 text-emerald-700{% else %}bg-gray-200 text-gray-500{% endif %}">
+        {% if product.is_available %}В наявності{% else %}Продано{% endif %}
+      </span>
+
+      <div class="liquid-glass rounded-[1.5rem] md:rounded-[2rem] p-4 md:p-6 space-y-2.5 md:space-y-3">
+        <div class="flex justify-between"><span>Категорія</span><strong>{{ product.category.name }}</strong></div>
+        <div class="flex justify-between"><span>Бренд</span><strong>{{ product.brand }}</strong></div>
+        <div class="flex justify-between"><span>Модель</span><strong>{{ product.model_name }}</strong></div>
+        {% if product.battery_health %}
+          <div class="flex justify-between"><span>Акумулятор</span><strong>{{ product.battery_health }}%</strong></div>
+        {% endif %}
+      </div>
+    </section>
+
+    <section class="stitch-detail-tabs-slot liquid-glass rounded-[1.5rem] md:rounded-[2rem] p-4 md:p-6 space-y-3 md:space-y-4" data-detail-tabs>
+      <div class="flex flex-wrap gap-2" role="tablist" aria-label="Деталі товару">
+        <button
+          class="stitch-btn stitch-detail-tab is-active"
+          type="button"
+          role="tab"
+          aria-selected="true"
+          data-tab-trigger="description"
+        >
+          Повний опис
+        </button>
+        <button
+          class="stitch-btn stitch-detail-tab"
+          type="button"
+          role="tab"
+          aria-selected="false"
+          data-tab-trigger="specs"
+        >
+          Характеристики
+        </button>
+      </div>
+
+      <div class="stitch-detail-tab-panels" data-tab-panels>
+        <div class="stitch-detail-tab-panel is-active" role="tabpanel" data-tab-panel="description" aria-hidden="false">
+          <p class="text-gray-600 leading-relaxed">{{ product.description|linebreaksbr }}</p>
+        </div>
+
+        <div class="stitch-detail-tab-panel" role="tabpanel" data-tab-panel="specs" aria-hidden="true" hidden>
+          {% if model_specs %}
+            <ul class="divide-y divide-white/45">
+              {% for spec in model_specs %}
+                <li class="flex items-start justify-between gap-3 py-1.5 md:gap-4 md:py-2">
+                  <span class="text-sm text-gray-500">{{ spec.label }}</span>
+                  <strong class="text-sm text-gray-900 text-right">{{ spec.value }}</strong>
+                </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <p class="text-sm text-gray-500">Характеристики для цієї моделі ще не додані.</p>
+          {% endif %}
+        </div>
+      </div>
+    </section>
+
+    <div class="stitch-detail-add-cart-slot">
+      <form method="post" action="{% url 'orders:buy_now' %}" class="stitch-detail-action-form">
+        {% csrf_token %}
+        <input type="hidden" name="product_id" value="{{ product.id }}">
+        <button class="stitch-btn stitch-btn--solid add-cart stitch-detail-add-cart" type="submit" {% if not product.is_available %}disabled{% endif %}>
+          Купити зараз
+        </button>
+      </form>
+      <button class="stitch-btn stitch-btn--solid add-cart stitch-detail-add-cart" type="button" {% if not product.is_available %}disabled{% endif %} hx-post="{% url 'orders:cart_add' %}" hx-vals='{"product_id":"{{ product.id }}"}' hx-target="#global-feedback" hx-swap="innerHTML">
+        Додати в кошик
+      </button>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+

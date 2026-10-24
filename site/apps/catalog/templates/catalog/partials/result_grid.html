@@ -1,0 +1,44 @@
+<div class="stitch-results-head">
+  <div class="stitch-results-line">
+    <p class="stitch-results-count">Знайдено <strong>{{ total_count }}</strong> позицій</p>
+    <label class="stitch-sort-control">
+      <span>Порядок видачі</span>
+      <span class="stitch-sort-select-wrap">
+        <select
+          name="sort"
+          form="catalog-filter-form"
+          data-sort-select
+        >
+          {% for value, label in sort_choices %}
+            <option value="{{ value }}"{% if selected_sort == value %} selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </span>
+    </label>
+  </div>
+  {% if active_filters %}
+    <ul class="stitch-active-filters stitch-active-filters--center" aria-label="Активні фільтри">
+      {% for chip in active_filters %}
+        <li>
+          <a class="stitch-chip active-filter-chip" href="{{ chip.remove_url }}" hx-get="{{ chip.remove_url }}" hx-target="#catalog-results" hx-push-url="true">
+            {{ chip.label }}
+            <span aria-hidden="true">&times;</span>
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+</div>
+
+<h2 id="catalog-current-category" class="w-full min-w-0 max-w-full text-center md:text-left md:pl-3 text-3xl sm:text-4xl lg:text-5xl font-light text-slate-800 tracking-tight leading-tight break-words mt-4 mb-4 md:mb-5">{{ current_category_name|default:"Всі товари" }}</h2>
+
+{% if products %}
+  <div class="stitch-grid stitch-grid--catalog">
+    {% for product in products %}
+      {% include "catalog/product_card.html" with product=product %}
+    {% endfor %}
+  </div>
+  {% include "catalog/partials/pagination.html" %}
+{% else %}
+  {% include "catalog/_empty_state.html" %}
+{% endif %}

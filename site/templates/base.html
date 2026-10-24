@@ -1,0 +1,96 @@
+{% load static %}
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>{% block title %}QuickPhoneUA{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}{{ seo_default_description }}{% endblock %}">
+  <meta name="robots" content="{% block meta_robots %}index,follow{% endblock %}">
+  <link rel="canonical" href="{% block canonical_url %}{{ seo_default_canonical_url }}{% endblock %}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=optional" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="{% static 'favicon-qp-orb.svg' %}">
+  <link rel="icon" type="image/png" sizes="32x32" href="{% static 'logo-light-neon-32.png' %}">
+  <link rel="apple-touch-icon" sizes="56x56" href="{% static 'logo-light-neon-56.png' %}">
+  <link rel="stylesheet" href="{% static 'css/tailwind.css' %}?v=tailwind-build-6">
+  <link rel="stylesheet" href="{% static 'css/stitch_mvp.css' %}?v=perf-lite-1">
+  <script src="https://unpkg.com/htmx.org@2.0.4" defer></script>
+  <script defer src="{% static 'js/ui.js' %}?v=20261024-fixes"></script>
+  {% block head_extra %}{% endblock %}
+</head>
+<body class="qp-performance-lite glass-high qp-bg-v3 font-display {% block body_class %}bg-[#eef1f6] text-zinc-800 min-h-screen flex flex-col{% endblock %}">
+  <div hidden aria-hidden="true">{% csrf_token %}</div>
+  <div class="stitch-bg" aria-hidden="true"></div>
+  <div class="qp-orbs" aria-hidden="true">
+    <span class="qp-orb qp-orb--1"></span>
+    <span class="qp-orb qp-orb--2"></span>
+    <span class="qp-orb qp-orb--3"></span>
+    <span class="qp-orb qp-orb--4"></span>
+    <span class="qp-orb qp-orb--5"></span>
+    <span class="qp-orb qp-orb--6"></span>
+    <span class="qp-orb qp-orb--7"></span>
+    <span class="qp-orb qp-orb--8"></span>
+    <span class="qp-orb qp-orb--9"></span>
+    <span class="qp-orb qp-orb--10"></span>
+  </div>
+  <div id="global-feedback" aria-live="polite"></div>
+  {% block top_background %}{% endblock %}
+  {% include "partials/navbar.html" %}
+
+  <main class="qp-main {% block main_class %}stitch-main{% endblock %}">
+    {% block content %}{% endblock %}
+  </main>
+
+  <aside
+    id="cart-panel"
+    class="stitch-cart-panel"
+    hx-get="{% url 'orders:cart_panel' %}"
+    hx-trigger="load, cart-updated from:body"
+    hx-swap="outerHTML"
+  ></aside>
+
+  {% if site_contacts.manager_telegram_url or site_contacts.phone_e164 %}
+  <div class="stitch-floating-contact" aria-label="Швидкий зв'язок">
+    {% if site_contacts.manager_telegram_url %}
+    <a
+      href="{{ site_contacts.manager_telegram_url }}"
+      class="stitch-floating-manager"
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="{{ site_contacts.manager_label }} в Telegram"
+      title="{{ site_contacts.manager_label }} в Telegram"
+    >
+      <span class="stitch-floating-manager__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none">
+          <circle cx="12" cy="12" r="10" fill="currentColor"/>
+          <path d="M17.38 7.76L6.98 11.77c-.65.25-.64 1.18.02 1.41l2.37.8.9 2.71c.23.68 1.17.76 1.51.12l1.34-2.55 2.54 1.89c.57.42 1.37.12 1.51-.58l1.37-6.72c.15-.59-.42-1.08-.96-.87zM10.54 13.8l4.93-4.03-3.82 5.11-.41.72-.42-1.8-.28-.2z" fill="#FFFFFF"/>
+        </svg>
+      </span>
+      <span class="stitch-floating-manager__label">Менеджер</span>
+    </a>
+    {% endif %}
+    {% if site_contacts.phone_e164 %}
+    <a
+      href="tel:{{ site_contacts.phone_e164 }}"
+      class="stitch-floating-manager stitch-floating-manager--call"
+      aria-label="Зателефонувати {{ site_contacts.phone_display }}"
+      title="Зателефонувати {{ site_contacts.phone_display }}"
+    >
+      <span class="stitch-floating-manager__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none">
+          <path d="M7.53 3.9h2.24c.35 0 .66.24.74.58l.62 2.58a.76.76 0 0 1-.22.75l-1.2 1.11a12.77 12.77 0 0 0 5.37 5.37l1.1-1.2a.76.76 0 0 1 .76-.22l2.58.62c.34.08.58.39.58.74v2.24a.76.76 0 0 1-.73.76 15.84 15.84 0 0 1-15.7-15.7.76.76 0 0 1 .76-.73z" fill="currentColor"/>
+        </svg>
+      </span>
+      <span class="stitch-floating-manager__label">Зателефонувати</span>
+    </a>
+    {% endif %}
+  </div>
+  {% endif %}
+
+  {% include "partials/footer.html" %}
+  {% block body_extra %}{% endblock %}
+</body>
+</html>
