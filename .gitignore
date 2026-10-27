@@ -22,6 +22,7 @@ site/media/*
 site/media/demo/*
 !site/media/demo/demo-*.png
 staticfiles/
+.demo/
 .env
 .env.*
 !.env.example

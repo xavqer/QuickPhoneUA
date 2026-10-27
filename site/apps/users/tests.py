@@ -40,6 +40,47 @@ class PhoneAuthTests(TestCase):
         payload.update(overrides)
         return payload
 
+    @override_settings(REGISTRATION_ENABLED=False)
+    def test_disabled_demo_registration_blocks_get_and_post_with_or_without_sms(self):
+        for sms_enabled in (False, True):
+            with self.subTest(sms_enabled=sms_enabled), self.settings(SMS_VERIFICATION_ENABLED=sms_enabled):
+                with patch("apps.users.services.SmsClubClient.send_sms") as send_sms:
+                    responses = (
+                        self.client.get(reverse("users:register")),
+                        self.client.post(reverse("users:register"), self._registration_payload()),
+                    )
+                send_sms.assert_not_called()
+                for response in responses:
+                    self.assertContains(response, "Реєстрація недоступна", status_code=403)
+                    self.assertContains(response, "сервіс SMS", status_code=403)
+                    self.assertContains(response, f'href="{reverse("catalog:list")}"', status_code=403)
+                    self.assertNotContains(response, 'name="phone"', status_code=403)
+                    self.assertNotContains(response, 'name="password1"', status_code=403)
+                    self.assertNotContains(response, 'name="code"', status_code=403)
+                    self.assertTrue(response.context["registration_disabled"])
+                self.assertEqual(self.user_model.objects.count(), 0)
+                self.assertEqual(PhoneVerificationChallenge.objects.count(), 0)
+
+    @override_settings(REGISTRATION_ENABLED=False, SMS_VERIFICATION_ENABLED=True)
+    def test_disabled_demo_registration_cannot_confirm_pending_registration(self):
+        challenge = services.start_registration_verification(self._registration_payload())
+        session = self.client.session
+        session[VERIFICATION_SESSION_KEYS[PhoneVerificationChallenge.Purpose.REGISTRATION]] = challenge.pk
+        session.save()
+        response = self.client.post(reverse("users:register"), {"verification_action": "verify", "code": "123456"})
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(self.user_model.objects.count(), 0)
+        challenge.refresh_from_db()
+        self.assertIsNone(challenge.consumed_at)
+        self.assertNotContains(response, 'name="code"', status_code=403)
+
+    @override_settings(REGISTRATION_ENABLED=False)
+    def test_disabled_registration_preserves_authenticated_redirect(self):
+        user = self.user_model.objects.create_user(username="existing-demo-user")
+        self.client.force_login(user)
+        response = self.client.get(reverse("users:register"), {"next": reverse("users:profile")})
+        self.assertRedirects(response, reverse("users:profile"), fetch_redirect_response=False)
+
     def test_registration_normalizes_local_phone_and_logs_user_in(self):
         response = self.client.post(reverse("users:register"), self._registration_payload())
 

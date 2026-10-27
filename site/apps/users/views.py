@@ -77,6 +77,9 @@ def register_view(request):
     if request.user.is_authenticated:
         return redirect(_resolve_next_url(request))
 
+    if not settings.REGISTRATION_ENABLED:
+        return render(request, "users/register.html", {"registration_disabled": True}, status=403)
+
     if not settings.SMS_VERIFICATION_ENABLED:
         _clear_all_verification_sessions(request)
         form = PhoneRegistrationForm(request.POST or None, initial=_registration_initial_from_request(request))

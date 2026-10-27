@@ -97,6 +97,17 @@ The repository includes `site/db.sqlite3` with 18 demo products and images in `s
 
 No API keys are needed to browse the catalog, register, use the profile and admin, or place a pickup order. HTMX and fonts load from CDNs and require an internet connection.
 
+## Demo deployment
+
+For a hosted demo without an SMS provider, disable registration:
+
+```text
+REGISTRATION_ENABLED=false
+SMS_VERIFICATION_ENABLED=false
+```
+
+With these settings, registration is unavailable and the site explains that SMS verification is not connected. Direct registration requests are also blocked. Catalog browsing and guest checkout remain available. Locally, registration is enabled by default so the account flows can be explored without a provider.
+
 ## Integration settings
 
 Available variables are listed in [site/.env.example](site/.env.example). Settings read the process environment; `.env` files are not loaded automatically.
@@ -125,7 +136,7 @@ The `config.settings.production` configuration uses PostgreSQL, secure cookies, 
 .\venv\Scripts\python.exe site\manage.py test apps.catalog apps.orders apps.users --settings=config.settings.local
 ```
 
-The project has 124 automated tests covering catalog filters, model validation, imports, image uploads, the cart, checkout, profile access, and SMS verification. External integrations are mocked, and Django creates a separate test database.
+The project has 127 automated tests covering catalog filters, model validation, imports, image uploads, the cart, checkout, profile access, SMS verification, and disabled demo registration. External integrations are mocked, and Django creates a separate test database.
 
 Additional checks:
 

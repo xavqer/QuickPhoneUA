@@ -10,6 +10,17 @@
   <div class="qp-glass-section rounded-[2.5rem] p-7 sm:p-10 relative overflow-hidden">
     <div class="absolute -top-24 -right-24 w-64 h-64 bg-white/40 rounded-full blur-3xl pointer-events-none"></div>
     <div class="relative z-10 space-y-8">
+      {% if registration_disabled %}
+      <header class="space-y-3">
+        <p class="text-[10px] uppercase font-bold tracking-[0.2em] text-zinc-500">Демонстраційна версія</p>
+        <h1 class="text-4xl font-light text-zinc-900 tracking-tighter">Реєстрація недоступна</h1>
+        <p class="text-sm text-zinc-600">
+          У цій демоверсії реєстрацію вимкнено: сервіс SMS для підтвердження номера не підключено.
+          Ви можете переглядати каталог без акаунта.
+        </p>
+      </header>
+      <a href="{% url 'catalog:list' %}" class="stitch-btn stitch-btn--solid inline-flex px-6 py-4 font-bold text-sm">Перейти до каталогу</a>
+      {% else %}
       <header class="space-y-3">
         <p class="text-[10px] uppercase font-bold tracking-[0.2em] text-zinc-500">Новий профіль</p>
         <h1 class="text-4xl font-light text-zinc-900 tracking-tighter">
@@ -80,10 +91,11 @@
           class="font-bold text-zinc-900 hover:text-zinc-600 transition-colors"
         >Увійти</a>
       </p>
+      {% endif %}
     </div>
   </div>
 </section>
-{% if sms_verification_enabled and verification %}
+{% if not registration_disabled and sms_verification_enabled and verification %}
   {% include "users/partials/code_verification_overlay.html" with verification=verification %}
 {% endif %}
 {% endblock %}
