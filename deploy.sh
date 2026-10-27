@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 set +x
 set -euo pipefail
-umask 027
+umask 022
 
-PROJECT_DIR="/srv/quickphoneua"
+PROJECT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
 SITE_DIR="$PROJECT_DIR/site"
 VENV_DIR="$PROJECT_DIR/venv"
 ENV_FILE="$SITE_DIR/.env.prod"

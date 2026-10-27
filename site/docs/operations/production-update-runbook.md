@@ -2,6 +2,21 @@
 
 Use this runbook when you already have the site running in production behind `gunicorn` and `nginx`, and you want to deploy new code from this repository.
 
+## Current public demo
+
+The live demo at https://quickphone.com.ua uses `/srv/quickphoneua-demo` and `config.settings.demo`. Its private environment file is `site/.env.prod`; its writable database is `site/.demo/db.sqlite3`. Run updates as `deploy` from the new checkout:
+
+```bash
+cd /srv/quickphoneua-demo
+bash deploy.sh
+```
+
+The deploy script resolves its own project directory, backs up the demo database and environment, updates dependencies/assets, applies demo migrations and checks HTTPS health and registration HTTP 403. Existing demo records are preserved. The published `demo_admin` credentials are for local development; this account is disabled in the hosted database.
+
+The old `/srv/quickphoneua` checkout and PostgreSQL database are preserved. The initial switch was backed up under `/srv/quickphoneua-backup-*`. Gunicorn uses the `99-demo.conf` systemd override; Nginx serves static/media files from the new checkout.
+
+The following sections describe the separate PostgreSQL production configuration. Do not apply those commands to the SQLite demo.
+
 ## Assumptions
 
 - The production server already has:

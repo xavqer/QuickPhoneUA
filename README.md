@@ -1,5 +1,9 @@
 # QuickPhoneUA
 
+**Live demo:** [quickphone.com.ua](https://quickphone.com.ua)
+
+Registration is disabled in the hosted demo because an SMS provider is not connected. Catalog browsing and guest checkout are available.
+
 A Django store for used smartphones, covering product browsing, checkout, and order management through the admin. Customers can place an order as guests or register to keep track of their orders.
 
 The project focuses on backend work: catalog queries, a session cart, validation, order transactions, phone-based authentication, and a Nova Poshta integration. Django templates render the pages, while HTMX updates individual sections without a full reload. The storefront interface is in Ukrainian.
@@ -98,6 +102,8 @@ The repository includes `site/db.sqlite3` with 18 demo products and images in `s
 No API keys are needed to browse the catalog, register, use the profile and admin, or place a pickup order. HTMX and fonts load from CDNs and require an internet connection.
 
 ## Demo deployment
+
+The hosted demo uses `config.settings.demo` with a separate SQLite database in `site/.demo/`. The published local `demo_admin` account is disabled on the server.
 
 For a hosted demo without an SMS provider, disable registration:
 
